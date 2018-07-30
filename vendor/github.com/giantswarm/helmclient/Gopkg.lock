@@ -146,13 +146,13 @@
   branch = "master"
   name = "github.com/giantswarm/errors"
   packages = ["guest"]
-  revision = "e829655ed78351b795407d7ec2b9b27d9a40dcf7"
+  revision = "9e78ca0e32a019481beb21ae3e158d1bb150730d"
 
 [[projects]]
   branch = "master"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
-  revision = "00489ad5cc81835cf9bf13e9dfa538fa6f3f729e"
+  revision = "eae67c7a8dfb02cba708181b8066e1b11713288d"
 
 [[projects]]
   branch = "master"
