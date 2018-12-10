@@ -1,6 +1,7 @@
 package helmclient
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/giantswarm/microerror"
@@ -10,7 +11,9 @@ const (
 	cannotReuseReleaseErrorPrefix = "cannot re-use"
 )
 
-var cannotReuseReleaseError = microerror.New("cannot reuse release")
+var cannotReuseReleaseError = &microerror.Error{
+	Kind: "cannotReuseReleaseError",
+}
 
 // IsCannotReuseRelease asserts cannotReuseReleaseError.
 func IsCannotReuseRelease(err error) bool {
@@ -30,14 +33,18 @@ func IsCannotReuseRelease(err error) bool {
 	return false
 }
 
-var executionFailedError = microerror.New("execution failed")
+var executionFailedError = &microerror.Error{
+	Kind: "executionFailedError",
+}
 
 // IsExecutionFailed asserts executionFailedError.
 func IsExecutionFailed(err error) bool {
 	return microerror.Cause(err) == executionFailedError
 }
 
-var invalidConfigError = microerror.New("invalid config")
+var invalidConfigError = &microerror.Error{
+	Kind: "invalidConfigError",
+}
 
 // IsInvalidConfig asserts invalidConfigError.
 func IsInvalidConfig(err error) bool {
@@ -48,7 +55,9 @@ const (
 	invalidGZipHeaderErrorPrefix = "gzip: invalid header"
 )
 
-var invalidGZipHeaderError = microerror.New("invalid gzip header")
+var invalidGZipHeaderError = &microerror.Error{
+	Kind: "invalidGZipHeaderError",
+}
 
 // IsInvalidGZipHeader asserts invalidGZipHeaderError.
 func IsInvalidGZipHeader(err error) bool {
@@ -68,11 +77,39 @@ func IsInvalidGZipHeader(err error) bool {
 	return false
 }
 
-var podNotFoundError = microerror.New("pod not found")
+var notFoundError = &microerror.Error{
+	Kind: "notFoundError",
+}
 
-// IsPodNotFound asserts podNotFoundError.
-func IsPodNotFound(err error) bool {
-	return microerror.Cause(err) == podNotFoundError
+// IsNotFound asserts notFoundError.
+func IsNotFound(err error) bool {
+	return microerror.Cause(err) == notFoundError
+}
+
+var (
+	releaseAlreadyExistsRegexp = regexp.MustCompile(`release named \S+ already exists`)
+)
+
+var releaseAlreadyExistsError = &microerror.Error{
+	Kind: "releaseAlreadyExistsError",
+}
+
+// IsReleaseAlreadyExists asserts releaseAlreadyExistsError.
+func IsReleaseAlreadyExists(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if c == releaseAlreadyExistsError {
+		return true
+	}
+	if releaseAlreadyExistsRegexp.MatchString(c.Error()) {
+		return true
+	}
+
+	return false
 }
 
 const (
@@ -80,7 +117,9 @@ const (
 	releaseNotFoundErrorSuffix = "not found"
 )
 
-var releaseNotFoundError = microerror.New("release not found")
+var releaseNotFoundError = &microerror.Error{
+	Kind: "releaseNotFoundError",
+}
 
 // IsReleaseNotFound asserts releaseNotFoundError.
 func IsReleaseNotFound(err error) bool {
@@ -103,28 +142,80 @@ func IsReleaseNotFound(err error) bool {
 	return false
 }
 
-var testReleaseFailureError = microerror.New("test release failure")
+var (
+	tarballNotFoundRegexp = regexp.MustCompile(`stat \S+: no such file or directory`)
+)
+
+var tarballNotFoundError = &microerror.Error{
+	Kind: "tarballNotFoundError",
+}
+
+// IsTarballNotFound asserts tarballNotFoundError.
+func IsTarballNotFound(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if c == tarballNotFoundError {
+		return true
+	}
+	if tarballNotFoundRegexp.MatchString(c.Error()) {
+		return true
+	}
+
+	return false
+}
+
+var testReleaseFailureError = &microerror.Error{
+	Kind: "testReleaseFailureError",
+}
 
 // IsTestReleaseFailure asserts testReleaseFailureError.
 func IsTestReleaseFailure(err error) bool {
 	return microerror.Cause(err) == testReleaseFailureError
 }
 
-var testReleaseTimeoutError = microerror.New("test release timeout")
+var testReleaseTimeoutError = &microerror.Error{
+	Kind: "testReleaseTimeoutError",
+}
 
 // IsTestReleaseTimeout asserts testReleaseTimeoutError.
 func IsTestReleaseTimeout(err error) bool {
 	return microerror.Cause(err) == testReleaseTimeoutError
 }
 
-var tillerInstallationFailedError = microerror.New("Tiller installation failed")
+var tillerInstallationFailedError = &microerror.Error{
+	Kind: "tillerInstallationFailedError",
+}
 
 // IsTillerInstallationFailed asserts tillerInstallationFailedError.
 func IsTillerInstallationFailed(err error) bool {
 	return microerror.Cause(err) == tillerInstallationFailedError
 }
 
-var tooManyResultsError = microerror.New("too many results")
+var tillerNotFoundError = &microerror.Error{
+	Kind: "tillerNotFoundError",
+}
+
+// IsTillerNotFound asserts tillerNotFoundError.
+func IsTillerNotFound(err error) bool {
+	return microerror.Cause(err) == tillerNotFoundError
+}
+
+var tillerOutdatedError = &microerror.Error{
+	Kind: "tillerOutdatedError",
+}
+
+// IsTillerOutdated asserts tillerOutdatedError.
+func IsTillerOutdated(err error) bool {
+	return microerror.Cause(err) == tillerOutdatedError
+}
+
+var tooManyResultsError = &microerror.Error{
+	Kind: "tooManyResultsError",
+}
 
 // IsTooManyResults asserts tooManyResultsError.
 func IsTooManyResults(err error) bool {
